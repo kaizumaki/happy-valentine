@@ -1,5 +1,15 @@
 FROM python:3.7
 ENV PYTHONUNBUFFERED 1
+RUN apt-get update \
+        && apt-get install -y aptitude \
+        && aptitude install -y mecab libmecab-dev mecab-ipadic-utf8 git make curl xz-utils file \
+        && mkdir /usr/lib/x86_64-linux-gnu/mecab \
+        && mkdir /usr/lib/x86_64-linux-gnu/mecab/dic \
+        && cd tmp \
+        && git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git \
+        && cd mecab-ipadic-neologd \
+        && ./bin/install-mecab-ipadic-neologd -n -y \
+        && cd /
 RUN mkdir /code
 WORKDIR /code
 ADD requirements.txt /code/
