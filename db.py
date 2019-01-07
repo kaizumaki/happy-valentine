@@ -12,8 +12,12 @@ TABLES['valentine'] = (
     "CREATE TABLE `valentine` ("
     "  `id` int(11) NOT NULL AUTO_INCREMENT,"
     "  `username` varchar(255) NOT NULL,"
-    "  `created_at` varchar(45) NOT NULL,"
+    "  `created_at` date NOT NULL,"
     "  `tweet` text NOT NULL,"
+    "  `noun` text,"
+    "  `verb` text,"
+    "  `adjective` text,"
+    "  `adverb` text,"
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")
 

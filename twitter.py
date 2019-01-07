@@ -2,7 +2,8 @@ import mysql.connector
 from mysql.connector import errorcode
 import tweepy
 import json
-from dateutil import parser
+import datetime
+import pytz
 import os
 from dotenv import load_dotenv
 
@@ -16,6 +17,11 @@ config = {
     'database': os.getenv("MYSQL_DATABASE"),
     'charset': 'utf8mb4'
 }
+
+
+def str_to_date_jp(str_date):
+    dts = datetime.datetime.strptime(str_date, '%a %b %d %H:%M:%S +0000 %Y')
+    return pytz.utc.localize(dts).astimezone(pytz.timezone('Asia/Tokyo'))
 
 
 def connect(username, created_at, tweet):
@@ -68,7 +74,7 @@ class Streamlistener(tweepy.StreamListener):
             if 'text' in raw_data:
 
                 username = raw_data['user']['screen_name']
-                created_at = parser.parse(raw_data['created_at'])
+                created_at = str_to_date_jp(raw_data['created_at'])
                 tweet = raw_data['text']
 
                 # insert data just collected into MySQL database
