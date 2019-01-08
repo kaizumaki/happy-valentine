@@ -1,10 +1,11 @@
 import MeCab
 from collections import defaultdict
-import unicodedata
 import mysql.connector
 from mysql.connector import errorcode
 import os
 from dotenv import load_dotenv
+import unicodedata
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 load_dotenv()
 
@@ -32,19 +33,57 @@ def get_data():
         print(e)
 
     cursor.close()
+    cnx.close()
 
     return data
 
 
-def insert_data(tweet_id, noun, verb, adjective, adverb):
+def get_mecabed_data():
     try:
         cnx = mysql.connector.connect(**config)
 
         if cnx.is_connected():
             cursor = cnx.cursor()
-            query = "INSERT INTO tweet_analysis (tweet_id, noun, verb, adjective, adverb) VALUES (%s, %s, %s, %s, %s)"
-            # query = "UPDATE valentine SET noun = %s, verb = %s, adjective = %s, adverb = %s WHERE id = %s"
-            cursor.execute(query, (tweet_id, noun, verb, adjective, adverb))
+            query = "SELECT group_concat(analysis_data separator ' ') FROM tweet_analysis WHERE part = '名詞'"
+            cursor.execute(query)
+            data = cursor.fetchall()
+
+    except errorcode as e:
+        print(e)
+
+    cursor.close()
+    cnx.close()
+
+    return data
+
+
+def insert_data(tweet_id, part, analysis_data):
+    try:
+        cnx = mysql.connector.connect(**config)
+
+        if cnx.is_connected():
+            cursor = cnx.cursor()
+            query = "INSERT INTO tweet_analysis (tweet_id, part, analysis_data) VALUES (%s, %s, %s)"
+            cursor.execute(query, (tweet_id, part, analysis_data))
+            cnx.commit()
+
+    except errorcode as e:
+        print(e)
+
+    cursor.close()
+    cnx.close()
+
+    return
+
+
+def update_data(tweet_id, mecabed):
+    try:
+        cnx = mysql.connector.connect(**config)
+
+        if cnx.is_connected():
+            cursor = cnx.cursor()
+            query = "UPDATE valentine_tweet SET mecabed = %s WHERE id = %s"
+            cursor.execute(query, (mecabed, tweet_id))
             cnx.commit()
 
     except errorcode as e:
@@ -79,35 +118,39 @@ if __name__ == "__main__":
     for row in data:
         res = mecab_analysis(unicodedata.normalize('NFKC', row['tweet']))
 
-        # noun_list = []
-        # verb_list = []
-        # adjective_list = []
-        # adverb_list = []
-
         for key in res.keys():
             if key == '名詞':
                 noun_list = []
                 for word in res[key]:
                     noun_list.append(word)
-                print(noun_list)
-                # tweetdata.update({'_id': d['_id']}, {'$push': {'noun': {'$each': noun_list}}})
+                noun_data = ' '.join(noun_list)
+                insert_data(row['id'], '名詞', noun_data)
             elif key == '動詞':
                 verb_list = []
                 for word in res[key]:
                     verb_list.append(word)
-                # tweetdata.update({'_id': d['_id']}, {'$push': {'verb': {'$each': verb_list}}})
+                verb_data = ' '.join(verb_list)
+                insert_data(row['id'], '動詞', verb_data)
             elif key == '形容詞':
                 adjective_list = []
                 for word in res[key]:
                     adjective_list.append(word)
-                # tweetdata.update({'_id': d['_id']}, {'$push': {'adjective': {'$each': adjective_list}}})
+                adjective_data = ' '.join(adjective_list)
+                insert_data(row['id'], '形容詞', adjective_data)
             elif key == '副詞':
                 adverb_list = []
                 for word in res[key]:
                     adverb_list.append(word)
-                # tweetdata.update({'_id': d['_id']}, {'$push': {'adverb': {'$each': adverb_list}}})
+                adverb_data = ' '.join(adverb_list)
+                insert_data(row['id'], '副詞', adverb_data)
 
         mecabed = True
-        # tweetdata.update({'_id': d['_id']}, {'$set': {'mecabed': True}})
-        # insert_data(row['id'], noun_list, verb_list, adjective_list, adverb_list, mecabed)
-        # print(noun_list)
+        update_data(row['id'], mecabed)
+
+    mecabed_data = get_mecabed_data()
+    print(mecabed_data)
+    vectorizer = TfidfVectorizer(stop_words=['バレンタイン'])
+    tfidf = vectorizer.fit_transform(mecabed_data[0])
+    print(tfidf)
+    terms = vectorizer.get_feature_names()
+    print(terms)
