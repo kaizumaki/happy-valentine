@@ -1,6 +1,5 @@
 tweepy
 python-dotenv
 mysql-connector-python
-python-dateutil
 mecab-python3
 pytz

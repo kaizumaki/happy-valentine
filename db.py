@@ -8,17 +8,26 @@ load_dotenv()
 DB_NAME = os.getenv("MYSQL_DATABASE")
 
 TABLES = {}
-TABLES['valentine'] = (
-    "CREATE TABLE `valentine` ("
+TABLES['valentine_tweet'] = (
+    "CREATE TABLE `valentine_tweet` ("
     "  `id` int(11) NOT NULL AUTO_INCREMENT,"
     "  `username` varchar(255) NOT NULL,"
     "  `created_at` date NOT NULL,"
     "  `tweet` text NOT NULL,"
-    "  `noun` text,"
-    "  `verb` text,"
-    "  `adjective` text,"
-    "  `adverb` text,"
+    "  `mecabed` enum('True','False'),"
     "  PRIMARY KEY (`id`)"
+    ") ENGINE=InnoDB")
+TABLES['tweet_analysis'] = (
+    "CREATE TABLE `tweet_analysis` ("
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,"
+    "  `tweet_id` int(11) NOT NULL,"
+    "  `noun` varchar(255),"
+    "  `verb` varchar(255),"
+    "  `adjective` varchar(255),"
+    "  `adverb` varchar(255),"
+    "  PRIMARY KEY (`id`),"
+    "  CONSTRAINT `tweet_analysis_ibfk_1` FOREIGN KEY (`tweet_id`) "
+    "     REFERENCES `valentine_tweet` (`id`) ON DELETE CASCADE"
     ") ENGINE=InnoDB")
 
 config = {

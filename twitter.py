@@ -25,18 +25,12 @@ def str_to_date_jp(str_date):
 
 
 def connect(username, created_at, tweet):
-    """
-    connect to MySQL database and insert twitter data
-    """
     try:
         cnx = mysql.connector.connect(**config)
 
         if cnx.is_connected():
-            """
-            Insert twitter data
-            """
             cursor = cnx.cursor()
-            query = "INSERT INTO valentine (username, created_at, tweet) VALUES (%s, %s, %s)"
+            query = "INSERT INTO valentine_tweet (username, created_at, tweet) VALUES (%s, %s, %s)"
             cursor.execute(query, (username, created_at, tweet))
             cnx.commit()
 
