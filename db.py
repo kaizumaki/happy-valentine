@@ -14,6 +14,7 @@ TABLES['valentine_tweet'] = (
     "  `username` varchar(255) NOT NULL,"
     "  `created_at` date NOT NULL,"
     "  `tweet` text NOT NULL,"
+    "  `wakachi` text,"
     "  `mecabed` enum('True','False'),"
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")

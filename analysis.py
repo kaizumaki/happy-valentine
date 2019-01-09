@@ -44,7 +44,7 @@ def get_mecabed_data():
 
         if cnx.is_connected():
             cursor = cnx.cursor()
-            query = "SELECT group_concat(analysis_data separator ' ') FROM tweet_analysis WHERE part = '名詞'"
+            query = "SELECT group_concat(t1.analysis_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t2.mecabed IS NOT True AND t1.part = '名詞'"
             cursor.execute(query)
             data = cursor.fetchall()
 
@@ -115,6 +115,7 @@ def mecab_analysis(sentence):
 
 if __name__ == "__main__":
     data = get_data()
+    print(data)
     for row in data:
         res = mecab_analysis(unicodedata.normalize('NFKC', row['tweet']))
 
@@ -144,13 +145,14 @@ if __name__ == "__main__":
                 adverb_data = ' '.join(adverb_list)
                 insert_data(row['id'], '副詞', adverb_data)
 
-        mecabed = True
-        update_data(row['id'], mecabed)
-
     mecabed_data = get_mecabed_data()
     print(mecabed_data)
-    vectorizer = TfidfVectorizer(stop_words=['バレンタイン'])
-    tfidf = vectorizer.fit_transform(mecabed_data[0])
-    print(tfidf)
-    terms = vectorizer.get_feature_names()
-    print(terms)
+    if mecabed_data[0] is not None:
+        vectorizer = TfidfVectorizer(stop_words=['バレンタイン'])
+        tfidf = vectorizer.fit_transform(mecabed_data[0])
+        print(tfidf)
+        terms = vectorizer.get_feature_names()
+        print(terms)
+        for row in data:
+            mecabed = True
+            update_data(row['id'], mecabed)
