@@ -39,52 +39,14 @@ def get_data():
     return data
 
 
-def get_mecabed_data():
+def update_data(tweet_id, wakachi, mecabed):
     try:
         cnx = mysql.connector.connect(**config)
 
         if cnx.is_connected():
             cursor = cnx.cursor()
-            query = "SELECT wakachi FROM valentine_tweet WHERE mecabed IS NOT True"
-            cursor.execute(query)
-            data = cursor.fetchall()
-
-    except errorcode as e:
-        print(e)
-
-    cursor.close()
-    cnx.close()
-
-    return data
-
-
-def update_data_wakachi(tweet_id, wakachi):
-    try:
-        cnx = mysql.connector.connect(**config)
-
-        if cnx.is_connected():
-            cursor = cnx.cursor()
-            query = "UPDATE valentine_tweet SET wakachi = %s WHERE id = %s"
-            cursor.execute(query, (wakachi, tweet_id))
-            cnx.commit()
-
-    except errorcode as e:
-        print(e)
-
-    cursor.close()
-    cnx.close()
-
-    return
-
-
-def update_data_mecabed(tweet_id, mecabed):
-    try:
-        cnx = mysql.connector.connect(**config)
-
-        if cnx.is_connected():
-            cursor = cnx.cursor()
-            query = "UPDATE valentine_tweet SET mecabed = %s WHERE id = %s"
-            cursor.execute(query, (mecabed, tweet_id))
+            query = "UPDATE valentine_tweet SET wakachi = %s, mecabed = %s WHERE id = %s"
+            cursor.execute(query, (wakachi, mecabed, tweet_id))
             cnx.commit()
 
     except errorcode as e:
@@ -109,20 +71,19 @@ if __name__ == "__main__":
     for row in data:
         res = mecab_analysis(unicodedata.normalize('NFKC', row['tweet']))
         wakachi_list.append(res)
-        update_data_wakachi(row['id'], res)
+        # update_data(row['id'], res, True)
 
-    mecabed_data = get_mecabed_data()
-    print(wakachi_list)
-    # if mecabed_data[0] is not None:
-    vectorizer = TfidfVectorizer(stop_words=['バレンタイン'])
-    tfidf = vectorizer.fit_transform(wakachi_list).toarray()
-    feature_names = np.array(vectorizer.get_feature_names())
-    index = tfidf.argsort(axis=1)[:, ::-1]
-    n = 10  # いくつほしいか
-    feature_words = [feature_names[doc[:n]] for doc in index]
-    print(feature_words)
-    # terms = vectorizer.get_feature_names()
-    # print(vectorizer.vocabulary_)
-    # for row in data:
-    #     mecabed = True
-    #     update_data_mecabed(row['id'], mecabed)
+    # print(wakachi_list)
+    if wakachi_list:
+        vectorizer = TfidfVectorizer(stop_words=['バレンタイン'])
+        tfidf = vectorizer.fit_transform(wakachi_list).toarray()
+        feature_names = np.array(vectorizer.get_feature_names())
+        index = tfidf.argsort(axis=1)[:, ::-1]
+        n = 10  # いくつほしいか
+        feature_words = [feature_names[doc[:n]] for doc in index]
+        print(feature_words)
+        terms = vectorizer.get_feature_names()
+        # print(terms)
+        # print(vectorizer.vocabulary_)
+        # for k, v in sorted(vectorizer.vocabulary_.items(), key=lambda x: x[1]):
+        #     print(k, v)
