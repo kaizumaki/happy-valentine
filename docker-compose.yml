@@ -11,18 +11,19 @@ services:
       - ./db-datadir:/var/lib/mysql
       - ./sql:/docker-entrypoint-initdb.d
     ports:
-      - "3306:3306"
+      - "3307:3307"
     tty: true
 
   app:
     build:
       context: ./
-    command: sh -c "./wait-for-it.sh db:3306"
+    container_name: happy-valentine
+    command: sh -c "./wait-for-it.sh db:3307"
     env_file:
       - .env
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8001:8001"
     depends_on:
       - db
