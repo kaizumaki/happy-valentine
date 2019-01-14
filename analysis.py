@@ -7,7 +7,11 @@ from dotenv import load_dotenv
 import unicodedata
 from sklearn.feature_extraction.text import TfidfVectorizer
 from operator import itemgetter
+from datetime import datetime, timedelta, timezone
+import csv
 import json
+
+JST = timezone(timedelta(hours=+9), 'JST')
 
 load_dotenv()
 
@@ -156,8 +160,27 @@ if __name__ == "__main__":
         feature_index = tfidf_matrix[doc, :].nonzero()[1]
         tfidf_scores = zip(feature_index, [tfidf_matrix[doc, x] for x in feature_index])
         scored_words = [(feature_names[i], s) for (i, s) in tfidf_scores]
-        for word, score in sorted(scored_words, key=itemgetter(1), reverse=True):
-            print(word, score)
+
+        csv_file_name = 'data/'+datetime.now(JST).strftime("%Y-%m-%d-%H-%M-%S")+'.csv'
+        json_file_name = 'data/'+datetime.now(JST).strftime("%Y-%m-%d-%H-%M-%S") + '.json'
+        with open(csv_file_name, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerows(sorted(scored_words, key=itemgetter(1), reverse=True))
+
+        csvfile = open(csv_file_name, 'r')
+        jsonfile = open(json_file_name, 'w')
+
+        fieldnames = ("word", "score")
+        reader = csv.DictReader(csvfile, fieldnames)
+        totallen = len(feature_index)
+
+        jsonfile.write('[')
+        for i, row in enumerate(reader):
+            json.dump(row, jsonfile, ensure_ascii=False)
+            if i != totallen - 1:
+                jsonfile.write(',\n')
+        jsonfile.write(']')
+
         for row in data:
             mecabed = True
             update_data(row['id'], mecabed)
