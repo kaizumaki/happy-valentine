@@ -13,7 +13,7 @@ config = {
     'user': os.getenv("MYSQL_USER"),
     'password': os.getenv("MYSQL_PASSWORD"),
     'host': 'db',
-    'port': '3306',
+    'port': '3307',
     'database': os.getenv("MYSQL_DATABASE"),
     'charset': 'utf8mb4'
 }

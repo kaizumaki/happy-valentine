@@ -6,6 +6,8 @@ import os
 from dotenv import load_dotenv
 import unicodedata
 from sklearn.feature_extraction.text import TfidfVectorizer
+from operator import itemgetter
+import json
 
 load_dotenv()
 
@@ -13,7 +15,7 @@ config = {
     'user': os.getenv("MYSQL_USER"),
     'password': os.getenv("MYSQL_PASSWORD"),
     'host': 'db',
-    'port': '3306',
+    'port': '3307',
     'database': os.getenv("MYSQL_DATABASE"),
     'charset': 'utf8mb4'
 }
@@ -44,7 +46,8 @@ def get_mecabed_data():
 
         if cnx.is_connected():
             cursor = cnx.cursor()
-            query = "SELECT group_concat(t1.analysis_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t2.mecabed IS NOT True AND t1.part = '名詞'"
+            # query = "SELECT group_concat(t1.mecabed_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t2.mecabed IS NOT True"
+            query = "SELECT group_concat(t1.mecabed_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t1.part <> '動詞'"
             cursor.execute(query)
             data = cursor.fetchall()
 
@@ -63,7 +66,7 @@ def insert_data(tweet_id, part, analysis_data):
 
         if cnx.is_connected():
             cursor = cnx.cursor()
-            query = "INSERT INTO tweet_analysis (tweet_id, part, analysis_data) VALUES (%s, %s, %s)"
+            query = "INSERT INTO tweet_analysis (tweet_id, part, mecabed_data) VALUES (%s, %s, %s)"
             cursor.execute(query, (tweet_id, part, analysis_data))
             cnx.commit()
 
@@ -115,7 +118,6 @@ def mecab_analysis(sentence):
 
 if __name__ == "__main__":
     data = get_data()
-    print(data)
     for row in data:
         res = mecab_analysis(unicodedata.normalize('NFKC', row['tweet']))
 
@@ -146,13 +148,16 @@ if __name__ == "__main__":
                 insert_data(row['id'], '副詞', adverb_data)
 
     mecabed_data = get_mecabed_data()
-    print(mecabed_data)
     if mecabed_data[0] is not None:
-        vectorizer = TfidfVectorizer(stop_words=['バレンタイン'])
-        tfidf = vectorizer.fit_transform(mecabed_data[0])
-        print(tfidf)
-        terms = vectorizer.get_feature_names()
-        print(terms)
+        vectorizer = TfidfVectorizer(stop_words=['バレンタイン', '拡散希望', 'https', 'retweet'])
+        tfidf_matrix = vectorizer.fit_transform(mecabed_data[0])
+        feature_names = vectorizer.get_feature_names()
+        doc = 0
+        feature_index = tfidf_matrix[doc, :].nonzero()[1]
+        tfidf_scores = zip(feature_index, [tfidf_matrix[doc, x] for x in feature_index])
+        scored_words = [(feature_names[i], s) for (i, s) in tfidf_scores]
+        for word, score in sorted(scored_words, key=itemgetter(1), reverse=True):
+            print(word, score)
         for row in data:
             mecabed = True
             update_data(row['id'], mecabed)
