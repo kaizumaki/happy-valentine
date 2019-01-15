@@ -1,12 +1,10 @@
 import MeCab
-from collections import defaultdict
 import mysql.connector
 from mysql.connector import errorcode
 import os
 from dotenv import load_dotenv
 import unicodedata
 from sklearn.feature_extraction.text import CountVectorizer
-import numpy as np
 
 load_dotenv()
 
@@ -80,19 +78,3 @@ if __name__ == "__main__":
         vector = word.toarray()
         for word, count in zip(vectorizer.get_feature_names()[:], vector[0, :]):
             print(word, count)
-        # tran = vectorizer.transform(wakachi_list)
-        # print(terms)
-        # print(wakachi_list[0])
-        # print(tran.toarray())
-        # vectorizer = TfidfVectorizer(stop_words=['バレンタイン'])
-        # tfidf = vectorizer.fit_transform(wakachi_list).toarray()
-        # feature_names = np.array(vectorizer.get_feature_names())
-        # index = tfidf.argsort(axis=1)[:, ::-1]
-        # n = 10  # いくつほしいか
-        # feature_words = [feature_names[doc[:n]] for doc in index]
-        # print(feature_words)
-        # terms = vectorizer.get_feature_names()
-        # print(terms)
-        # print(vectorizer.vocabulary_)
-        # for k, v in sorted(vectorizer.vocabulary_.items(), key=lambda x: x[1]):
-        #     print(k, v)
