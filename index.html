@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id="data"></div>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script>
+    $(document).ready(function() {
+      $.getJSON('data_files.json')
+        .done(function(json){
+          console.log(json);
+        });
+    });
+    // 読み込みデータファイル
+    var DATA_FILE_PATH = './data.json';
+    // 一覧描画先
+    var TARGET_ELEMENT_ID = '#data';
+    // 項目名：漢字表記
+    var COL_KANJI = 'kanji';
+    // 項目名：かな表記
+    var COL_KANA = 'kana';
+    // 項目名：色ID
+    var COL_COLOR_ID = 'color';
+
+    // drawTable();
+
+    /**
+     * データ一覧の描画
+     */
+    function drawTable() {
+        d3.json(DATA_FILE_PATH, function(error, root) {
+            // 第2引数のrootが読み込んだJSONの最上位になる
+            // ここでは色関連情報の配列を取得した形になる
+
+            d3.select(TARGET_ELEMENT_ID)
+                .append('div')
+                .selectAll()
+                .data(root)
+                .enter()
+                .append('div')
+                .text(function (dataRow) {
+                    // 読み込んだデータを参照する場合はコールバック関数を通す
+                    return dataRow[COL_KANJI]
+                    + '（' + dataRow[COL_KANA] + '）'
+                    + '：' + dataRow[COL_COLOR_ID];
+                });
+        });
+    }
+  </script>
+</body>
+</html>
