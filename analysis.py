@@ -50,7 +50,7 @@ def get_mecabed_data():
 
         if cnx.is_connected():
             cursor = cnx.cursor()
-            # query = "SELECT group_concat(t1.mecabed_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t2.mecabed IS NOT True"
+            # query = "SELECT group_concat(t1.mecabed_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t2.mecabed IS NOT True AND t1.part <> '動詞'"
             query = "SELECT group_concat(t1.mecabed_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t1.part <> '動詞'"
             cursor.execute(query)
             data = cursor.fetchall()
@@ -120,6 +120,15 @@ def mecab_analysis(sentence):
     return result_dict
 
 
+def isJsonFormat(file):
+    try:
+        json.load(file)
+    except json.JSONDecodeError as e:
+        print(e)
+        return False
+    return True
+
+
 if __name__ == "__main__":
     data = get_data()
     for row in data:
@@ -161,8 +170,9 @@ if __name__ == "__main__":
         tfidf_scores = zip(feature_index, [tfidf_matrix[doc, x] for x in feature_index])
         scored_words = [(feature_names[i], s) for (i, s) in tfidf_scores]
 
-        csv_file_name = 'data/'+datetime.now(JST).strftime("%Y-%m-%d-%H-%M-%S")+'.csv'
-        json_file_name = 'data/'+datetime.now(JST).strftime("%Y-%m-%d-%H-%M-%S") + '.json'
+        now = datetime.now(JST).strftime("%Y-%m-%d-%H-%M-%S")
+        csv_file_name = 'data/' + now + '.csv'
+        json_file_name = 'data/' + now + '.json'
         with open(csv_file_name, 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerows(sorted(scored_words, key=itemgetter(1), reverse=True))
@@ -170,13 +180,13 @@ if __name__ == "__main__":
         csvfile = open(csv_file_name, 'r')
         jsonfile = open(json_file_name, 'w')
 
-        fieldnames = ("word", "score")
+        fieldnames = ('word', 'score')
         reader = csv.DictReader(csvfile, fieldnames)
         totallen = len(feature_index)
 
         jsonfile.write('[')
         for i, row in enumerate(reader):
-            json.dump(row, jsonfile, ensure_ascii=False)
+            json.dump(row, jsonfile, ensure_ascii=False, separators=(', ', ': '))
             if i != totallen - 1:
                 jsonfile.write(',\n')
         jsonfile.write(']')
