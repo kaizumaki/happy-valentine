@@ -163,21 +163,6 @@ if __name__ == "__main__":
 
         now = datetime.now(JST).strftime("%Y-%m-%d-%H-%M-%S")
 
-        with open('data_names.csv', 'a', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow([now])
-
-        data_names_csvfile = open('data_names.csv', 'r')
-        data_names_jsonfile = open('data_names.json', 'w')
-        data_names_reader = csv.DictReader(data_names_csvfile, ('filename',))
-
-        data_names_jsonfile.write('[')
-        for i, row in enumerate(data_names_reader):
-            if i != 0:
-                data_names_jsonfile.write(',\n')
-            json.dump(row, data_names_jsonfile, ensure_ascii=False)
-        data_names_jsonfile.write(']')
-
         csv_file_name = 'data/' + now + '.csv'
         json_file_name = 'data/' + now + '.json'
         with open(csv_file_name, 'w', newline='') as f:
@@ -197,6 +182,21 @@ if __name__ == "__main__":
                 jsonfile.write(',\n')
             json.dump(row, jsonfile, ensure_ascii=False)
         jsonfile.write(']}')
+
+        with open('data_names.csv', 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([now])
+
+        data_names_csvfile = open('data_names.csv', 'r')
+        data_names_jsonfile = open('data_names.json', 'w')
+        data_names_reader = csv.DictReader(data_names_csvfile, ('filename',))
+
+        data_names_jsonfile.write('[')
+        for i, row in enumerate(data_names_reader):
+            if i != 0:
+                data_names_jsonfile.write(',\n')
+            json.dump(row, data_names_jsonfile, ensure_ascii=False)
+        data_names_jsonfile.write(']')
 
         for row in data:
             mecabed = True
