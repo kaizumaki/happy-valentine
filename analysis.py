@@ -120,15 +120,6 @@ def mecab_analysis(sentence):
     return result_dict
 
 
-def isJsonFormat(file):
-    try:
-        json.load(file)
-    except json.JSONDecodeError as e:
-        print(e)
-        return False
-    return True
-
-
 if __name__ == "__main__":
     data = get_data()
     for row in data:
