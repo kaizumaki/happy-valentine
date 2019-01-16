@@ -5,124 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <!--<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>-->
+  <script src="https://d3js.org/d3.v4.min.js"></script>
   <style>
-   .axis--x path {
-     display: none;
-   }
-   .line {
-     fill: none;
-     stroke: steelblue;
-     stroke-width: 1.5px;
-   }
+    text {
+      font: 10px sans-serif;
+    }
   </style>
 </head>
 <body>
-  <svg width="960" height="500"></svg>
-
-  <script>
-  // svg タグ
-  var svg = d3.select("svg");
-
-  // グラフ本体のサイズを計算
-  var margin = {top: 20, right: 80, bottom: 30, left: 50};
-  var width = svg.attr("width") - margin.left - margin.right;
-  var height = svg.attr("height") - margin.top - margin.bottom;
-
-  // svg タグ内で利用する div のようなコンテナ要素 'g' https://developer.mozilla.org/ja/docs/Web/SVG/Element/g
-  // グラフ本体 g を移動させます https://developer.mozilla.org/ja/docs/Web/SVG/Attribute/transform
-  var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  // ユーティリティ関数を定義 https://github.com/d3/d3-time-format
-  // Date を返します https://www.qoosky.io/techs/50044defab
-  var parseTime = d3.timeParse("%Y%m%d");
-  //var parseTime = d3.timeParse("%s"); // タイムスタンプの場合
-
-  // 入力データの区間 domain[from, to] を
-  // グラフ上の区間 range[from, to] に変換 scale するための関数を定義
-  // https://github.com/d3/d3-scale/blob/master/README.md
-  var xx = d3.scaleTime().range([0, width]);
-  var yy = d3.scaleLinear().range([height, 0]);
-  // 折れ線の色を変えるために range を `d3.schemeCategory10` に指定
-  // https://github.com/d3/d3-scale-chromatic/blob/master/README.md#schemeCategory10
-  var zz = d3.scaleOrdinal(d3.schemeCategory10);
-
-  // データから折れ線を生成するための関数を定義
-  // [{ date: "20111001", temperature: 63.4 }]
-  // という形式の配列の要素をグラフ上の点に変換する .x() と .y() を設定
-  // https://github.com/d3/d3-shape/blob/master/README.md
-  var line = d3.line()
-      .curve(d3.curveBasis)
-      .x(function(d) { return xx(d.date); })
-      .y(function(d) { return yy(d.temperature); });
-
-  // TSV を読み込んで処理
-  // (非同期処理のプロミスが利用されています https://www.qoosky.io/techs/cf38dc8583 )
-  d3.tsv("http://localhost:8888/data.tsv").then(function(data) {
-
-    // TSV を利用しやすい形式に変換
-    // [{"date":"20111001", "New York":"63.4", "San Francisco":"62.7", "Austin":"72.2"}]
-    // slice: https://www.qoosky.io/techs/0366645194#slice
-    var cities = data.columns.slice(1).map(function(cityName) {
-      return {
-        id: cityName,
-        values: data.map(function(d) {
-          return {date: parseTime(d.date), temperature: d[cityName]};
-        })
-      };
-    });
-
-    // X 軸の入力データ幅を設定
-    // https://github.com/d3/d3-array/blob/master/README.md#extent
-    xx.domain(d3.extent(data, function(d) { return parseTime(d.date); }));
-
-    // Y 軸の入力データ幅を設定
-    yy.domain([
-      d3.min(cities, function(c) { return d3.min(c.values, function(d) { return d.temperature; }); }),
-      d3.max(cities, function(c) { return d3.max(c.values, function(d) { return d.temperature; }); })
-    ]);
-
-    // 複数のグラフ (Z 軸の入力は cityName とします)
-    zz.domain(cities.map(function(c) { return c.id; }));
-
-    // 横軸のラベルを追加
-    g.append("g")
-        .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(xx));
-
-    // 縦軸のラベルを追加
-    // https://developer.mozilla.org/ja/docs/Web/SVG/Element/text
-    g.append("g")
-        .attr("class", "axis axis--y")
-        .call(d3.axisLeft(yy))
-      .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 15) // グラフから 15px 離します
-        .attr("fill", "#000")
-        .text("Temperature, ºF");
-
-    // TSV から加工した cities データの種類分だけ g を追加
-    var city = g.selectAll(".city")
-      .data(cities)
-      .enter().append("g")
-        .attr("class", "city");
-
-    // 折れ線として SVG の path 要素を追加 https://developer.mozilla.org/ja/docs/Web/SVG/Element/path
-    city.append("path")
-        .attr("class", "line")
-        .attr("d", function(d) { return line(d.values); })
-        .style("stroke", function(d) { return zz(d.id); });
-
-    // 折れ線のラベルとして SVG の text 要素を追加 https://developer.mozilla.org/ja/docs/Web/SVG/Element/text
-    city.append("text")
-        .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; }) // 各 city の最後の要素
-        .attr("transform", function(d) { return "translate(" + xx(d.value.date) + "," + yy(d.value.temperature) + ")"; })
-        .attr("x", 5) // 5px
-        .style("font", "10px sans-serif")
-        .text(function(d) { return d.id; });
-  });
-  </script>
+  <script src="index.js"></script>
 </body>
 </html>
