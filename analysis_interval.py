@@ -134,8 +134,8 @@ def vectorizer_analysis(previous_time, interval_seconds):
 
             current = current_time.strftime("%Y-%m-%d-%H-%M-%S")
 
-            csv_file_name = 'data/' + current + '.csv'
-            json_file_name = 'data/' + current + '.json'
+            csv_file_name = 'html/data/' + current + '.csv'
+            json_file_name = 'html/data/' + current + '.json'
             with open(csv_file_name, 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerows(sorted(scored_words, key=itemgetter(1), reverse=True))
@@ -153,12 +153,12 @@ def vectorizer_analysis(previous_time, interval_seconds):
                 json.dump(row, jsonfile, ensure_ascii=False)
             jsonfile.write(']}')
 
-            with open('data_names.csv', 'a', newline='') as f:
+            with open('html/data_names.csv', 'a', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow([current])
 
-            data_names_csvfile = open('data_names.csv', 'r')
-            data_names_jsonfile = open('data_names.json', 'w')
+            data_names_csvfile = open('html/data_names.csv', 'r')
+            data_names_jsonfile = open('html/data_names.json', 'w')
             data_names_reader = csv.DictReader(data_names_csvfile, ('filename',))
 
             data_names_jsonfile.write('[')

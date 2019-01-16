@@ -14,4 +14,4 @@ yarn-error.log*
 !.gitkeep
 
 .env
-data_names.*
+html/data_names.*

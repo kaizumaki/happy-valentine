@@ -163,8 +163,8 @@ if __name__ == "__main__":
 
         now = datetime.now(JST).strftime("%Y-%m-%d-%H-%M-%S")
 
-        csv_file_name = 'data/' + now + '.csv'
-        json_file_name = 'data/' + now + '.json'
+        csv_file_name = 'html/data/' + now + '.csv'
+        json_file_name = 'html/data/' + now + '.json'
         with open(csv_file_name, 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerows(sorted(scored_words, key=itemgetter(1), reverse=True))
@@ -182,12 +182,12 @@ if __name__ == "__main__":
             json.dump(row, jsonfile, ensure_ascii=False)
         jsonfile.write(']}')
 
-        with open('data_names.csv', 'a', newline='') as f:
+        with open('html/data_names.csv', 'a', newline='') as f:
             writer = csv.writer(f)
             writer.writerow([now])
 
-        data_names_csvfile = open('data_names.csv', 'r')
-        data_names_jsonfile = open('data_names.json', 'w')
+        data_names_csvfile = open('html/data_names.csv', 'r')
+        data_names_jsonfile = open('html/data_names.json', 'w')
         data_names_reader = csv.DictReader(data_names_csvfile, ('filename',))
 
         data_names_jsonfile.write('[')
