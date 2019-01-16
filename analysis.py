@@ -200,12 +200,12 @@ if __name__ == "__main__":
         reader = csv.DictReader(csvfile, fieldnames)
         totallen = len(feature_index)
 
-        jsonfile.write('[')
+        jsonfile.write('{"scored_words":[')
         for i, row in enumerate(reader):
             if i != 0:
                 jsonfile.write(',\n')
             json.dump(row, jsonfile, ensure_ascii=False)
-        jsonfile.write(']')
+        jsonfile.write(']}')
 
         for row in data:
             mecabed = True
