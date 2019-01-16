@@ -12,37 +12,41 @@ var svg = d3.select("main").append("svg")
     .attr("height", diameter)
     .attr("class", "bubble");
 
-d3.json("data/2019-01-16-11-59-30.json", function(error, data) {
-  if (error) throw error;
+d3.json("data_names.json", function(error, data) {
+  var json_file = data[data.length - 1].filename;
 
-  var root = d3.hierarchy(words(data))
-      .sum(function(d) { return d.value; })
-      .sort(function(a, b) { return b.value - a.value; });
+  d3.json("data/" + json_file + ".json", function(error, data) {
+    if (error) throw error;
 
-  bubble(root);
-  var node = svg.selectAll(".node")
-      .data(root.children)
-      .enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+    var root = d3.hierarchy(words(data))
+        .sum(function(d) { return d.value; })
+        .sort(function(a, b) { return b.value - a.value; });
 
-  node.append("title")
-      .text(function(d) { return d.data.word + ": " + format(d.value); });
+    bubble(root);
+    var node = svg.selectAll(".node")
+        .data(root.children)
+        .enter().append("g")
+        .attr("class", "node")
+        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
-  node.append("circle")
-      .attr("r", function(d) { return d.r; })
-      .style("fill", function(d) {
-        return color(d.data.color);
-      });
+    node.append("title")
+        .text(function(d) { return d.data.word + ": " + format(d.value); });
 
-  node.append("text")
-      .attr("dy", ".3em")
-      .attr("font-size", function(d){
-        return d.r/4;
-      })
-      .attr("fill", "white")
-      .style("text-anchor", "middle")
-      .text(function(d) { return d.data.word.substring(0, d.r/3); });
+    node.append("circle")
+        .attr("r", function(d) { return d.r; })
+        .style("fill", function(d) {
+          return color(d.data.color);
+        });
+
+    node.append("text")
+        .attr("dy", ".3em")
+        .attr("font-size", function(d){
+          return d.r/4;
+        })
+        .attr("fill", "white")
+        .style("text-anchor", "middle")
+        .text(function(d) { return d.data.word.substring(0, d.r/3); });
+  });
 });
 
 function words(root) {
