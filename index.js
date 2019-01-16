@@ -1,56 +1,58 @@
 var diameter = 960,
     format = d3.format(",d"),
-    color = d3.scaleOrdinal(d3.schemeCategory20c);
+    color = color = d3.scaleOrdinal()
+    .range(["#CA2B1D", "#CA7112", "#CA3089", "#845E51", "#84367a", "#840d32"]);
 
 var bubble = d3.pack()
     .size([diameter, diameter])
     .padding(1.5);
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("main").append("svg")
     .attr("width", diameter)
     .attr("height", diameter)
     .attr("class", "bubble");
 
-d3.json("flare.json", function(error, data) {
+d3.json("data/2019-01-16-11-59-30.json", function(error, data) {
   if (error) throw error;
 
-  var root = d3.hierarchy(classes(data))
+  var root = d3.hierarchy(words(data))
       .sum(function(d) { return d.value; })
       .sort(function(a, b) { return b.value - a.value; });
 
   bubble(root);
   var node = svg.selectAll(".node")
       .data(root.children)
-    .enter().append("g")
+      .enter().append("g")
       .attr("class", "node")
       .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
   node.append("title")
-      .text(function(d) { return d.data.className + ": " + format(d.value); });
+      .text(function(d) { return d.data.word + ": " + format(d.value); });
 
   node.append("circle")
       .attr("r", function(d) { return d.r; })
       .style("fill", function(d) {
-        return color(d.data.packageName);
+        return color(d.data.color);
       });
 
   node.append("text")
       .attr("dy", ".3em")
+      .attr("font-size", function(d){
+        return d.r/4;
+      })
+      .attr("fill", "white")
       .style("text-anchor", "middle")
-      .text(function(d) { return d.data.className.substring(0, d.r / 3); });
+      .text(function(d) { return d.data.word.substring(0, d.r/3); });
 });
 
-// Returns a flattened hierarchy containing all leaf nodes under the root.
-function classes(root) {
-  var classes = [];
+function words(root) {
+  var words = [];
 
-  function recurse(name, node) {
-    if (node.children) node.children.forEach(function(child) { recurse(node.name, child); });
-    else classes.push({packageName: name, className: node.name, value: node.size});
-  }
+  root.scored_words.forEach(function(elm, index) {
+    words.push({color: index, word: elm.word, value: elm.score * 100});
+  });
 
-  recurse(null, root);
-  return {children: classes};
+  return {children: words};
 }
 
 d3.select(self.frameElement).style("height", diameter + "px");
