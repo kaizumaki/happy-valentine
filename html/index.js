@@ -12,6 +12,36 @@ var svg = d3.select("main").append("svg")
     .attr("height", diameter)
     .attr("class", "bubble");
 
+// Step
+var data = [1, 2, 3];
+
+var sliderStep = d3
+  .sliderBottom()
+  .min(d3.min(data))
+  .max(d3.max(data))
+  .width(300)
+  .tickFormat(d3.format('0'))
+  .tickValues(data)
+  .step(1)
+  .default(1)
+  .on('onchange', val => {
+    d3.select('p#value-step').text(d3.format('0')(val));
+  });
+
+var gStep = d3
+  .select('div#slider-step')
+  .append('svg')
+  .attr('width', 500)
+  .attr('height', 100)
+  .append('g')
+  .attr('transform', 'translate(30,30)');
+
+gStep.call(sliderStep);
+
+d3.select('p#value-step').text(d3.format('0')(sliderStep.value()));
+
+console.log(sliderStep.value());
+
 d3.json("data_names.json", function(error, data) {
   var json_file = data[data.length - 1].filename;
 
