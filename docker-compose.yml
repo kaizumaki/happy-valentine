@@ -25,7 +25,5 @@ services:
       - .env
     volumes:
       - .:/code
-    ports:
-      - "8001:8001"
     depends_on:
       - db
