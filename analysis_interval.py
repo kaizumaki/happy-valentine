@@ -205,4 +205,4 @@ if __name__ == "__main__":
         mecabed = True
         update_data(row['id'], mecabed)
 
-    vectorizer_analysis('2019-01-16 20:15:27', 60*30)
+    vectorizer_analysis('2019-01-16 20:15:27', 60*60)
