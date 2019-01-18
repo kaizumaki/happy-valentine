@@ -39,17 +39,18 @@ var gStep = d3
 
 gStep.call(sliderStep);
 
-window.onload = function(){update_data(0);}
+window.onload = function(){update_data(1);}
 d3.select('p#value-step').text(d3.format('0')(sliderStep.value()));
 
 function update_data(num) {
   d3.json("data_names.json", function (error, data) {
     var json_data = [];
-    var json_files = ["data/2019-01-17-15-30-00.json", "data/2019-01-17-16-30-00.json"];
+    var json_files = ["data/2019-01-18-16-30-00.json", "data/2019-01-18-15-30-00.json", "data/2019-01-18-14-30-00.json"];
 
     var q = d3.queue()
     .defer(d3.json, json_files[0])
     .defer(d3.json, json_files[1])
+    .defer(d3.json, json_files[2])
     .awaitAll(function(error, results) {
       if (error) throw error;
 
