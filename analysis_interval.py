@@ -168,9 +168,10 @@ def vectorizer_analysis(previous_time, interval_seconds):
                 json.dump(row, data_names_jsonfile, ensure_ascii=False)
             data_names_jsonfile.write(']')
 
+            previous_time = previous_time + timedelta(seconds=interval_seconds + 1)
             current_time = current_time + timedelta(seconds=interval_seconds)
 
-            print(current_time)
+            print(previous_time, current_time)
 
 
 if __name__ == "__main__":
