@@ -10,10 +10,10 @@ var bubble = d3.pack()
 var svg = d3.select("main").append("svg")
     .attr("width", diameter)
     .attr("height", diameter)
-    .attr("class", "bubble")
+    .attr("class", "bubble");
 
 // Step
-var data = [1, 2, 3];
+var data = [-2, -1, 0];
 
 var sliderStep = d3
   .sliderBottom()
@@ -23,7 +23,7 @@ var sliderStep = d3
   .tickFormat(d3.format('0'))
   .tickValues(data)
   .step(1)
-  .default(1)
+  .default(0)
   .on('onchange', val => {
     d3.select('p#value-step').text(d3.format('0')(val));
     update_data(val);
@@ -39,7 +39,7 @@ var gStep = d3
 
 gStep.call(sliderStep);
 
-window.onload = function(){update_data(1);}
+update_data(0);
 d3.select('p#value-step').text(d3.format('0')(sliderStep.value()));
 
 function update_data(num) {
@@ -56,78 +56,76 @@ function update_data(num) {
     .awaitAll(function(error, results) {
       if (error) throw error;
 
-      var word_data = words(results[num - 1]);
+      var word_data = words(results[num * -1]);
 
       // transition
       var t = d3.transition()
         .duration(750);
 
       var root = d3.hierarchy(word_data)
-        .sum(function (d) {
-          return d.value;
-        })
-        .sort(function (a, b) {
-          return b.value - a.value;
-        });
+        .sum(function(d){ return d.value; })
+        .sort(function(a, b){ return b.value - a.value; });
 
       //JOIN
       var circle = svg.selectAll("circle")
           .data(bubble(root).leaves(), function(d){ return d.data.word; });
 
       var text = svg.selectAll("text")
-          .data(bubble(root).leaves(), function(d){ return d.data.word; });
+          .data(bubble(root).leaves(), function(d){ return d.data.word; })
+          .style("opacity", 1)
+          .style("font-size", function(d){
+            return d.r / 4;
+          });
 
       //EXIT
       circle.exit()
-          // .style("fill", "#b26745")
         .transition(t)
           .attr("r", 1e-6)
           .remove();
 
       text.exit()
         .transition(t)
-          .attr("opacity", 1e-6)
+          .style("opacity", 1e-6)
           .remove();
 
       //UPDATE
       circle
         .transition(t)
-          .attr("fill", function (d) { return color(d.data.color); })
           .attr("r", function(d){ return d.r })
           .attr("cx", function(d){ return d.x; })
-          .attr("cy", function(d){ return d.y; })
+          .attr("cy", function(d){ return d.y; });
 
       text
         .transition(t)
           .attr("x", function(d){ return d.x; })
-          .attr("y", function(d){ return d.y; });
+          .attr("y", function(d){ return d.y; })
+          .style("opacity", 1);
 
       //ENTER
       circle.enter().append("circle")
-          .attr("r", function (d){ return d.r; })
+          .attr("r", function(d){ return d.r; })
           .attr("cx", function(d){ return d.x; })
           .attr("cy", function(d){ return d.y; })
-          .attr("fill", function (d) { return color(d.data.color); })
+          .attr("fill", function(d){ return color(d.data.color); })
         .transition(t)
-          // .style("fill", "#45b29d")
           .attr("r", function(d){ return d.r });
 
       text.enter().append("text")
-          // .attr("opacity", 1e-6)
+          .style("opacity", 1e-6)
           .attr("x", function(d){ return d.x; })
           .attr("y", function(d){ return d.y; })
           .attr("dy", ".3em")
-          .style("font-size", function (d) {
+          .style("font-size", function(d){
             return d.r / 4;
           })
           .attr("fill", "white")
           .style("text-anchor", "middle")
-          .text(function (d) {
+          .text(function(d){
             return d.data.word.substring(0, d.r / 3);
           })
         .transition(t)
-          .attr("fill", "white")
-          // .attr("opacity", 1);
+          .style("opacity", 1)
+          .attr("fill", "white");
     });
   });
 }
