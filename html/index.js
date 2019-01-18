@@ -44,8 +44,10 @@ d3.select('p#value-step').text(d3.format('0')(sliderStep.value()));
 
 function update_data(num) {
   d3.json("data_names.json", function (error, data) {
-    var json_data = [];
-    var json_files = ["data/2019-01-18-16-30-00.json", "data/2019-01-18-15-30-00.json", "data/2019-01-18-14-30-00.json"];
+    var json_files = [];
+    for (var i=1; i <= 3; i++) {
+      json_files.push("data/" + data[data.length - i].filename + ".json")
+    }
 
     var q = d3.queue()
     .defer(d3.json, json_files[0])

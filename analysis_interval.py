@@ -168,10 +168,8 @@ def vectorizer_analysis(previous_time, interval_seconds):
                 json.dump(row, data_names_jsonfile, ensure_ascii=False)
             data_names_jsonfile.write(']')
 
-            previous_time = previous_time + timedelta(seconds=interval_seconds + 1)
+            previous_time = current_time + timedelta(seconds=1)
             current_time = current_time + timedelta(seconds=interval_seconds)
-
-            print(previous_time, current_time)
 
 
 if __name__ == "__main__":
@@ -208,4 +206,4 @@ if __name__ == "__main__":
         mecabed = True
         update_data(row['id'], mecabed)
 
-    vectorizer_analysis('2019-01-17 14:30:00', 60*3600)
+    vectorizer_analysis('2019-01-18 23:10:00', 60*3600)
