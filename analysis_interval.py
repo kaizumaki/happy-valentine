@@ -170,6 +170,8 @@ def vectorizer_analysis(previous_time, interval_seconds):
 
             current_time = current_time + timedelta(seconds=interval_seconds)
 
+            print(current_time)
+
 
 if __name__ == "__main__":
     data = get_data()
