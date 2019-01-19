@@ -117,7 +117,7 @@ def mecab_analysis(sentence):
     return result_dict
 
 
-def vectorizer_analysis(previous_time, interval_seconds):
+def vectorizer_analysis_interval(previous_time, interval_seconds):
     now = datetime.now() + timedelta(hours=9)
     previous = datetime.strptime(previous_time, "%Y-%m-%d %H:%M:%S")
     current_time = previous + timedelta(seconds=interval_seconds)
@@ -208,4 +208,4 @@ if __name__ == "__main__":
         update_data(row['id'], mecabed)
 
     # ４時間間隔
-    vectorizer_analysis('2019-01-19 00:00:00', 60*240)
+    vectorizer_analysis_interval('2019-01-19 00:00:00', 60*240)

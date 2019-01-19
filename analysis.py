@@ -10,6 +10,8 @@ from operator import itemgetter
 from datetime import datetime, timedelta, timezone
 import csv
 import json
+import time
+import threading
 
 JST = timezone(timedelta(hours=+9), 'JST')
 
@@ -119,8 +121,7 @@ def mecab_analysis(sentence):
             break
     return result_dict
 
-
-if __name__ == "__main__":
+def vectorizer_analysis():
     data = get_data()
     for row in data:
         res = mecab_analysis(unicodedata.normalize('NFKC', row['tweet']))
@@ -200,3 +201,23 @@ if __name__ == "__main__":
         for row in data:
             mecabed = True
             update_data(row['id'], mecabed)
+
+        print(now)
+
+
+def schedule(interval, f, wait=True):
+    base_time = time.time()
+    next_time = 0
+    while True:
+        t = threading.Thread(target=f)
+        t.start()
+        if wait:
+            t.join()
+        next_time = ((base_time - time.time()) % interval) or interval
+        time.sleep(next_time)
+
+
+if __name__ == "__main__":
+    intarval_seconds = 60 * 240
+    # time.sleep(intarval_seconds)
+    schedule(intarval_seconds, vectorizer_analysis())
