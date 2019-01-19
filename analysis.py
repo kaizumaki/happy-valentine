@@ -53,7 +53,6 @@ def get_mecabed_data():
         if cnx.is_connected():
             cursor = cnx.cursor()
             query = "SELECT group_concat(t1.mecabed_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t2.mecabed IS NOT True AND t1.part <> '動詞'"
-            # query = "SELECT group_concat(t1.mecabed_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t1.part <> '動詞'"
             cursor.execute(query)
             data = cursor.fetchall()
 
