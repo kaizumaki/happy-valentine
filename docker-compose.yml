@@ -20,7 +20,7 @@ services:
     container_name: happy-valentine
     hostname: happy-valentine
     domainname: kaizumaki.net
-    command: sh -c "./wait-for-it.sh db:3307 && python db.py && python twitter.py && python analysis.py"
+    command: sh -c "./wait-for-it.sh db:3307 && python db.py && python twitter.py"
     env_file:
       - .env
     volumes:
