@@ -121,6 +121,7 @@ def mecab_analysis(sentence):
             break
     return result_dict
 
+
 def vectorizer_analysis():
     data = get_data()
     for row in data:
@@ -219,5 +220,5 @@ def schedule(interval, f, wait=True):
 
 if __name__ == "__main__":
     intarval_seconds = 60 * 240
-    # time.sleep(intarval_seconds)
+    time.sleep(intarval_seconds)
     schedule(intarval_seconds, vectorizer_analysis())

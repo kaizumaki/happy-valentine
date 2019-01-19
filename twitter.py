@@ -106,6 +106,3 @@ if __name__ == '__main__':
     stream = tweepy.Stream(auth=api.auth, listener=listener)
     track = ['バレンタイン', '義理チョコ']
     stream.filter(track=track, languages=['ja'])
-
-    command = ["python", "analysis.py"]
-    subprocess.Popen(command)

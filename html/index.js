@@ -13,13 +13,13 @@ var svg = d3.select("main").append("svg")
     .attr("class", "bubble");
 
 // Step
-var data = [-2, -1, 0];
+var data = [-6, -5, -4, -3, -2, -1, 0];
 
 var sliderStep = d3
   .sliderBottom()
   .min(d3.min(data))
   .max(d3.max(data))
-  .width(300)
+  .width(400)
   .tickFormat(d3.format('0'))
   .tickValues(data)
   .step(1)
@@ -45,7 +45,7 @@ d3.select('p#value-step').text(d3.format('0')(sliderStep.value()));
 function update_data(num) {
   d3.json("data_names.json", function (error, data) {
     var json_files = [];
-    for (var i=1; i <= 3; i++) {
+    for (var i=1; i <= 7; i++) {
       json_files.push("data/" + data[data.length - i].filename + ".json")
     }
 
@@ -53,6 +53,10 @@ function update_data(num) {
     .defer(d3.json, json_files[0])
     .defer(d3.json, json_files[1])
     .defer(d3.json, json_files[2])
+    .defer(d3.json, json_files[3])
+    .defer(d3.json, json_files[4])
+    .defer(d3.json, json_files[5])
+    .defer(d3.json, json_files[6])
     .awaitAll(function(error, results) {
       if (error) throw error;
 
