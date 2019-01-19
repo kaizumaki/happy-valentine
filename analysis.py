@@ -218,6 +218,6 @@ def schedule(interval, f, wait=True):
 
 
 if __name__ == "__main__":
-    intarval_seconds = 60 * 240
+    intarval_seconds = 60 * 5
     time.sleep(intarval_seconds)
-    schedule(intarval_seconds, vectorizer_analysis())
+    schedule(intarval_seconds, vectorizer_analysis(), False)
