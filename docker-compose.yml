@@ -12,7 +12,7 @@ services:
       - ./sql:/docker-entrypoint-initdb.d
     ports:
       - "3307:3307"
-    tty: true
+    restart: always
 
   app:
     build:
@@ -25,5 +25,6 @@ services:
       - .env
     volumes:
       - .:/code
+    restart: always
     depends_on:
       - db
