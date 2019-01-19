@@ -122,6 +122,7 @@ def vectorizer_analysis(previous_time, interval_seconds):
     previous = datetime.strptime(previous_time, "%Y-%m-%d %H:%M:%S")
     current_time = previous + timedelta(seconds=interval_seconds)
     while current_time < now:
+        print(previous_time, current_time)
         mecabed_data = get_mecabed_data(previous_time, current_time)
         if mecabed_data[0] is not None:
             vectorizer = TfidfVectorizer(stop_words=['バレンタイン', '拡散希望', 'https', 'retweet'])
@@ -206,4 +207,5 @@ if __name__ == "__main__":
         mecabed = True
         update_data(row['id'], mecabed)
 
-    vectorizer_analysis('2019-01-18 23:10:00', 60*3600)
+    # ４時間間隔
+    vectorizer_analysis('2019-01-19 00:00:00', 60*240)
