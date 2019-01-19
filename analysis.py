@@ -10,8 +10,6 @@ from operator import itemgetter
 from datetime import datetime, timedelta, timezone
 import csv
 import json
-import time
-import threading
 
 JST = timezone(timedelta(hours=+9), 'JST')
 
@@ -205,19 +203,5 @@ def vectorizer_analysis():
         print(now)
 
 
-def schedule(interval, f, wait=True):
-    base_time = time.time()
-    next_time = 0
-    while True:
-        t = threading.Thread(target=f)
-        t.start()
-        if wait:
-            t.join()
-        next_time = ((base_time - time.time()) % interval) or interval
-        time.sleep(next_time)
-
-
 if __name__ == "__main__":
-    intarval_seconds = 60 * 5
-    time.sleep(intarval_seconds)
-    schedule(intarval_seconds, vectorizer_analysis(), False)
+    vectorizer_analysis()

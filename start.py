@@ -1,5 +1,6 @@
 import subprocess
 import threading
+import time
 
 
 def main():
@@ -7,12 +8,24 @@ def main():
     subprocess.call(command_twitter)
 
 
-def other():
+def sub():
     command_analysis = ["python", "analysis.py"]
     subprocess.call(command_analysis)
 
 
 if __name__ == "__main__":
-    thread_obj = threading.Thread(target=other)
-    thread_obj.start()
-    main()
+    main_thread = threading.Thread(target=main)
+    main_thread.start()
+
+    interval = 60 * 240
+    time.sleep(interval)
+    wait = True
+    base_time = time.time()
+    next_time = 0
+    while True:
+        sub_thread = threading.Thread(target=sub)
+        sub_thread.start()
+        if wait:
+            sub_thread.join()
+        next_time = ((base_time - time.time()) % interval) or interval
+        time.sleep(next_time)
