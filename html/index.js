@@ -25,7 +25,6 @@ var sliderStep = d3
   .step(1)
   .default(0)
   .on('onchange', val => {
-    d3.select('p#value-step').text(d3.format('0')(val));
     update_data(val);
   });
 
@@ -40,13 +39,20 @@ var gStep = d3
 gStep.call(sliderStep);
 
 update_data(0);
-d3.select('p#value-step').text(d3.format('0')(sliderStep.value()));
+
+function toDate(str, delimiter) {
+  var arr = str.split(delimiter);
+  var date = moment({ y: arr[0], MM: arr[1], d: arr[2], h: arr[3], m: arr[4], s: arr[5]}).format("lll");
+  return date;
+};
 
 function update_data(num) {
   d3.json("data_names.json", function (error, data) {
     var json_files = [];
+    var json_files_date =[];
     for (var i=1; i <= 7; i++) {
       json_files.push("data/" + data[data.length - i].filename + ".json")
+      json_files_date.push(toDate(data[data.length - i].filename, "-"))
     }
 
     var q = d3.queue()
@@ -59,6 +65,8 @@ function update_data(num) {
     .defer(d3.json, json_files[6])
     .awaitAll(function(error, results) {
       if (error) throw error;
+
+      d3.select('p#value-step').text(json_files_date[num * -1]);
 
       var word_data = words(results[num * -1]);
 
