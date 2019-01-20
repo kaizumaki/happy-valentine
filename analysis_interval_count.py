@@ -26,7 +26,6 @@ def get_mecabed_data(previous_time, current_time):
 
         if cnx.is_connected():
             cursor = cnx.cursor()
-            # query = "SELECT group_concat(t1.mecabed_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t2.created_at BETWEEN %s AND %s AND t1.part <> '動詞'"
             query = "SELECT group_concat(t1.mecabed_data separator ' ') FROM tweet_analysis t1 JOIN valentine_tweet t2 ON t1.tweet_id = t2.id WHERE t2.created_at BETWEEN %s AND %s"
             cursor.execute(query, (previous_time, current_time))
             data = cursor.fetchall()
@@ -48,7 +47,7 @@ def vectorizer_analysis_interval(previous_time, interval_seconds):
         print(previous_time, current_time)
         mecabed_data = get_mecabed_data(previous_time, current_time)
         if mecabed_data[0] is not None:
-            vectorizer = CountVectorizer(stop_words=['バレンタイン', '拡散希望', 'https', 'retweet'])
+            vectorizer = CountVectorizer(stop_words=['バレンタイン', '拡散希望', 'https', 'retweet', 'する', 'いる'])
             tfidf_matrix = vectorizer.fit_transform(mecabed_data[0])
             feature_names = vectorizer.get_feature_names()
             doc = 0
