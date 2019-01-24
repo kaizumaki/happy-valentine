@@ -168,33 +168,30 @@ def vectorizer_analysis():
             writer = csv.writer(f)
             writer.writerows(sorted(scored_words, key=itemgetter(1), reverse=True))
 
-        csvfile = open(csv_file_name, 'r')
-        jsonfile = open(json_file_name, 'w')
-
-        fieldnames = ('word', 'score')
-        reader = csv.DictReader(csvfile, fieldnames)
-
-        jsonfile.write('{"scored_words":[')
-        for i, row in enumerate(reader):
-            if i != 0:
-                jsonfile.write(',\n')
-            json.dump(row, jsonfile, ensure_ascii=False)
-        jsonfile.write(']}')
+        with open(csv_file_name, 'r', newline='') as f_csv:
+            fieldnames = ('word', 'score')
+            reader = csv.DictReader(f_csv, fieldnames)
+            with open(json_file_name, 'w', newline='') as f_json:
+                f_json.write('{"scored_words":[')
+                for i, row in enumerate(reader):
+                    if i != 0:
+                        f_json.write(',\n')
+                    json.dump(row, f_json, ensure_ascii=False)
+                f_json.write(']}')
 
         with open('html/data_names.csv', 'a', newline='') as f:
             writer = csv.writer(f)
             writer.writerow([now])
 
-        data_names_csvfile = open('html/data_names.csv', 'r')
-        data_names_jsonfile = open('html/data_names.json', 'w')
-        data_names_reader = csv.DictReader(data_names_csvfile, ('filename',))
-
-        data_names_jsonfile.write('[')
-        for i, row in enumerate(data_names_reader):
-            if i != 0:
-                data_names_jsonfile.write(',\n')
-            json.dump(row, data_names_jsonfile, ensure_ascii=False)
-        data_names_jsonfile.write(']')
+        with open('html/data_names.csv', 'r', newline='') as f_name_csv:
+            data_names_reader = csv.DictReader(f_name_csv, ('filename',))
+            with open('html/data_names.json', 'w', newline='') as f_name_json:
+                f_name_json.write('[')
+                for i, row in enumerate(data_names_reader):
+                    if i != 0:
+                        f_name_json.write(',\n')
+                    json.dump(row, f_name_json, ensure_ascii=False)
+                f_name_json.write(']')
 
         for row in data:
             mecabed = True

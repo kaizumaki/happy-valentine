@@ -63,18 +63,16 @@ def vectorizer_analysis_interval(previous_time, interval_seconds):
                 writer = csv.writer(f)
                 writer.writerows(sorted(scored_words, key=itemgetter(1), reverse=True))
 
-            csvfile = open(csv_file_name, 'r')
-            jsonfile = open(json_file_name, 'w')
-
-            fieldnames = ('word', 'score')
-            reader = csv.DictReader(csvfile, fieldnames)
-
-            jsonfile.write('{"scored_words":[')
-            for i, row in enumerate(reader):
-                if i != 0:
-                    jsonfile.write(',\n')
-                json.dump(row, jsonfile, ensure_ascii=False)
-            jsonfile.write(']}')
+            with open(csv_file_name, 'r', newline='') as f_csv:
+                fieldnames = ('word', 'score')
+                reader = csv.DictReader(f_csv, fieldnames)
+                with open(json_file_name, 'w', newline='') as f_json:
+                    f_json.write('{"scored_words":[')
+                    for i, row in enumerate(reader):
+                        if i != 0:
+                            f_json.write(',\n')
+                        json.dump(row, f_json, ensure_ascii=False)
+                    f_json.write(']}')
 
             previous_time = current_time + timedelta(seconds=1)
             current_time = current_time + timedelta(seconds=interval_seconds)
@@ -82,4 +80,4 @@ def vectorizer_analysis_interval(previous_time, interval_seconds):
 
 if __name__ == "__main__":
     # ４時間間隔
-    vectorizer_analysis_interval('2019-01-19 00:00:00', 60*240)
+    vectorizer_analysis_interval('2019-01-23 00:00:00', 60*240)
