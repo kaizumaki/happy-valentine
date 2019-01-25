@@ -13,7 +13,7 @@
   <style>
     body {
       background-color: #fff6ef;
-      font-family: sans-serif;
+      font-family: 'Courier', sans-serif;
     }
     .container {
       position: relative;
@@ -24,18 +24,27 @@
       padding: 1em;
       text-align: center;
     }
+    .title {
+      font-weight: normal;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div>
-      <p id="value-step"></p>
-      <div id="slider-step"></div>
-    </div>
-    <main></main>
-    <div>
+    <header>
+      <h1 class="title">Happy Valentine!</h1>
+    </header>
+    <main>
+      <div>
+        <p id="value-step"></p>
+        <div id="slider-step"></div>
+      </div>
+      <div id="chart"></div>
+    </main>
+    <footer>
       <p>created by Kazuki Imamura<br>twitter: @kaizumaki<br><a href="https://medium.com/@kaizumaki/happy-valentine-python-c927c35a8ea6">blog</a></p>
-    </div>
+    </footer>
   </div>
   <script src="index.js"></script>
 </body>

@@ -7,7 +7,7 @@ var bubble = d3.pack()
     .size([diameter, diameter])
     .padding(1.5);
 
-var svg = d3.select("main").append("svg")
+var svg = d3.select("#chart").append("svg")
     .attr("width", diameter)
     .attr("height", diameter)
     .attr("class", "bubble");
@@ -29,7 +29,7 @@ var sliderStep = d3
   });
 
 var gStep = d3
-  .select('div#slider-step')
+  .select('#slider-step')
   .append('svg')
   .attr('width', 500)
   .attr('height', 100)
@@ -66,7 +66,7 @@ function update_data(num) {
     .awaitAll(function(error, results) {
       if (error) throw error;
 
-      d3.select('p#value-step').text(json_files_date[num * -1]);
+      d3.select('#value-step').text(json_files_date[num * -1]);
 
       var word_data = words(results[num * -1]);
 
