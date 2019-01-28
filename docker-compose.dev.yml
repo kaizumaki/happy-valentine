@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+
+  db:
+    build:
+      context: ./mysql
+    command: mysqld --user=mysql --innodb-use-native-aio=0
+    env_file:
+      - .env
+    volumes:
+      - ./db-datadir:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+    ports:
+      - "3307:3307"
+    restart: always
+
+  app:
+    build:
+      context: ./
+    command: sh -c "./wait-for-it.sh db:3307 && python db.py"
+    env_file:
+      - .env
+    volumes:
+      - .:/code
+    restart: always
+    depends_on:
+      - db
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - /sessions
+    depends_on:
+      - db
