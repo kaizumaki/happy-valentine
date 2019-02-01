@@ -1,6 +1,5 @@
 var diameter = 960,
-    format = d3.format(",d"),
-    color = color = d3.scaleOrdinal()
+    color = d3.scaleOrdinal()
     .range(["#CA2B1D", "#CA7112", "#CA3089", "#845E51", "#84367a", "#840d32"]);
 
 var bubble = d3.pack()
@@ -42,7 +41,7 @@ update_data(0);
 
 function toDate(str, delimiter) {
   var arr = str.split(delimiter);
-  var date = moment({ y: arr[0], MM: arr[1], d: arr[2], h: arr[3], m: arr[4], s: arr[5]}).format("lll");
+  var date = moment(arr[0] + "-" + arr[1] + "-" + arr[2] + " " + arr[3] + ":" + arr[4] + ":" + arr[5]).format("lll");
   return date;
 };
 
