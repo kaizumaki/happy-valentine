@@ -151,7 +151,8 @@ def vectorizer_analysis():
                 insert_data(row['id'], '副詞', adverb_data)
 
     mecabed_data = get_mecabed_data()
-    if mecabed_data[0] is not None:
+
+    try:
         vectorizer = TfidfVectorizer(stop_words=['バレンタイン', '拡散希望', 'https', 'retweet', 'する', 'いる'])
         tfidf_matrix = vectorizer.fit_transform(mecabed_data[0])
         feature_names = vectorizer.get_feature_names()
@@ -198,6 +199,10 @@ def vectorizer_analysis():
             update_data(row['id'], mecabed)
 
         print(now)
+
+    except AttributeError as e:
+        print(e)
+        print('There are no non-mecabed tweets.')
 
 
 if __name__ == "__main__":

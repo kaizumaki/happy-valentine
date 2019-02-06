@@ -46,7 +46,8 @@ def vectorizer_analysis_interval(previous_time, interval_seconds):
     while current_time < now:
         print(previous_time, current_time)
         mecabed_data = get_mecabed_data(previous_time, current_time)
-        if mecabed_data[0] is not None:
+
+        try:
             vectorizer = CountVectorizer(stop_words=['バレンタイン', '拡散希望', 'https', 'retweet', 'する', 'いる'])
             tfidf_matrix = vectorizer.fit_transform(mecabed_data[0])
             feature_names = vectorizer.get_feature_names()
@@ -54,7 +55,7 @@ def vectorizer_analysis_interval(previous_time, interval_seconds):
             feature_index = tfidf_matrix[doc, :].nonzero()[1]
             tfidf_scores = zip(feature_index, [tfidf_matrix[doc, x] for x in feature_index])
             scored_words = [(feature_names[i], s) for (i, s) in tfidf_scores]
-
+            # print(vectorizer.vocabulary_)
             current = current_time.strftime("%Y-%m-%d-%H-%M-%S")
 
             csv_file_name = 'html/data_count/' + current + '.csv'
@@ -74,8 +75,12 @@ def vectorizer_analysis_interval(previous_time, interval_seconds):
                         json.dump(row, f_json, ensure_ascii=False)
                     f_json.write(']}')
 
-            previous_time = current_time + timedelta(seconds=1)
-            current_time = current_time + timedelta(seconds=interval_seconds)
+        except AttributeError as e:
+            print(e)
+            print('There are no tweets.')
+
+        previous_time = current_time + timedelta(seconds=1)
+        current_time = current_time + timedelta(seconds=interval_seconds)
 
 
 if __name__ == "__main__":
