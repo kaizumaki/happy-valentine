@@ -210,4 +210,4 @@ if __name__ == "__main__":
         update_data(row['id'], mecabed)
 
     # ４時間間隔
-    vectorizer_analysis_interval('2019-01-23 00:00:00', 60*240)
+    vectorizer_analysis_interval('2019-02-06 00:00:00', 60*240)
