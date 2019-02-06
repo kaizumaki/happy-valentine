@@ -49,12 +49,12 @@ def vectorizer_analysis_interval(previous_time, interval_seconds):
 
         try:
             vectorizer = CountVectorizer(stop_words=['バレンタイン', '拡散希望', 'https', 'retweet', 'する', 'いる'])
-            tfidf_matrix = vectorizer.fit_transform(mecabed_data[0])
+            count_matrix = vectorizer.fit_transform(mecabed_data[0])
             feature_names = vectorizer.get_feature_names()
             doc = 0
-            feature_index = tfidf_matrix[doc, :].nonzero()[1]
-            tfidf_scores = zip(feature_index, [tfidf_matrix[doc, x] for x in feature_index])
-            scored_words = [(feature_names[i], s) for (i, s) in tfidf_scores]
+            feature_index = count_matrix[doc, :].nonzero()[1]
+            count_scores = zip(feature_index, [count_matrix[doc, x] for x in feature_index])
+            scored_words = [(feature_names[i], s) for (i, s) in count_scores]
             # print(vectorizer.vocabulary_)
             current = current_time.strftime("%Y-%m-%d-%H-%M-%S")
 
@@ -85,4 +85,4 @@ def vectorizer_analysis_interval(previous_time, interval_seconds):
 
 if __name__ == "__main__":
     # ４時間間隔
-    vectorizer_analysis_interval('2019-01-23 00:00:00', 60*240)
+    vectorizer_analysis_interval('2019-02-06 00:00:00', 60*240)
