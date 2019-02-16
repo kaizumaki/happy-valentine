@@ -118,7 +118,8 @@ def mecab_analysis(sentence):
 
 
 def vectorizer_analysis_interval(previous_time, interval_seconds):
-    now = datetime.now() + timedelta(hours=9)
+    # now = datetime.now() + timedelta(hours=9)
+    now = datetime.strptime('2019-02-15 04:33:00', "%Y-%m-%d %H:%M:%S")
     previous = datetime.strptime(previous_time, "%Y-%m-%d %H:%M:%S")
     current_time = previous + timedelta(seconds=interval_seconds)
     while current_time < now:
