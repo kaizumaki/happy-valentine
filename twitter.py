@@ -55,18 +55,11 @@ class Streamlistener(tweepy.StreamListener):
             # returning false disconnects the stream
             return False
 
-    """
-    This method reads in tweet data as Json
-    and extracts the data we want.
-    """
-
     def on_data(self, data):
-
         try:
             raw_data = json.loads(data)
 
             if 'text' in raw_data:
-
                 username = raw_data['user']['screen_name']
                 created_at = str_to_date_jp(raw_data['created_at'])
                 tweet = raw_data['text']
